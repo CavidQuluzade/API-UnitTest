@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
-using Business.Dtos.Product;
+using Business.Features.Product.Commands.ProductCreate;
+using Business.Features.Product.Commands.ProductUpdate;
+using Business.Features.Product.Dtos;
 using Common.Entities;
 using System;
 using System.Collections.Generic;
@@ -13,9 +15,9 @@ namespace Business.MappingProfiles
     {
         public ProductMappingProfile()
         {
-            CreateMap<ProductCreateDto, Product>();
+            CreateMap<ProductCreateCommand, Product>();
             CreateMap<Product, ProductInfoDto>();
-            CreateMap<ProductUpdateDto, Product>()
+            CreateMap<ProductUpdateCommand, Product>()
                 .ForMember(dest => dest.Photo, opt =>
                 {
                     opt.Condition(src => src.Photo is not null);

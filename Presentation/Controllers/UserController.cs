@@ -1,5 +1,4 @@
-﻿using Business.Dtos.Product;
-using Business.Features.User.Dtos;
+﻿using Business.Features.User.Dtos;
 using Business.Features.User.Queries;
 using Business.Wrappers;
 using MediatR;

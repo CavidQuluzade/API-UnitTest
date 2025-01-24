@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
-using Business.Dtos.Product;
 using Business.Features.Auth.Commands.AuthLogin;
-using Business.Services.Abstract;
-using Business.Services.Concrete;
+using Business.Features.Product.Dtos;
+using Business.Features.Product.Queries.GetProduct;
 using Business.Wrappers;
 using Common.Entities;
 using Common.Exceptions;
@@ -16,34 +15,32 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UnitTest.Services.Product
+namespace UnitTest.Handlers.Product.Query
 {
-    public class GetProductServiceTests
+    public class GetProductQueryTests
     {
-        private readonly Mock<IProductRepository> _productRepository;
+        private readonly Mock<IProductReadRepository> _productReadRepository;
         private readonly Mock<IMapper> _mapper;
-        private readonly Mock<IUnitOfWork> _unitOfWork;
-        private readonly ProductService _handler;
-        public GetProductServiceTests()
+        private readonly GetProductQueryHandler _handler;
+        public GetProductQueryTests()
         {
-            _productRepository = new Mock<IProductRepository>();
             _mapper = new Mock<IMapper>();
-            _unitOfWork = new Mock<IUnitOfWork>();
-            _handler = new ProductService(_productRepository.Object, _unitOfWork.Object ,_mapper.Object);
+            _productReadRepository = new Mock<IProductReadRepository>();
+            _handler = new GetProductQueryHandler(_productReadRepository.Object, _mapper.Object);
         }
 
         [Fact]
         public async Task Service_WhenProductNotFound_ShouldReturnNotFoundException()
         {
             //Arrange
-            var request = new ProductInfoDto
+            var request = new GetProductQuery
             {
                 Id = 3
             };
-            _productRepository.Setup(x => x.GetAsync(request.Id)).ReturnsAsync(value: null);
+            _productReadRepository.Setup(x => x.GetAsync(request.Id)).ReturnsAsync(value: null);
 
             //Act
-            Func<Task> func = async() => await _handler.GetProductAsync(request.Id);
+            Func<Task> func = async () => await _handler.Handle(request, It.IsAny<CancellationToken>());
 
             //Assert
             var exception = await Assert.ThrowsAsync<NotFoundException>(func);
@@ -54,14 +51,14 @@ namespace UnitTest.Services.Product
         public async Task Service_WhenFlowIsSucceded_ShouldReturnNotFoundException()
         {
             //Arrange
-            var request = new ProductInfoDto
+            var request = new GetProductQuery
             {
                 Id = 3
             };
-            _productRepository.Setup(x => x.GetAsync(request.Id)).ReturnsAsync(new Common.Entities.Product());
+            _productReadRepository.Setup(x => x.GetAsync(request.Id)).ReturnsAsync(new Common.Entities.Product());
 
             //Act
-            var response = await _handler.GetProductAsync(request.Id);
+            var response = await _handler.Handle(request, It.IsAny<CancellationToken>());
 
             //Assert
             Assert.IsType<Response<ProductInfoDto>>(response);

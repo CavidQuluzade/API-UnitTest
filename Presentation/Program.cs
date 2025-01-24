@@ -1,6 +1,4 @@
 using Business.MappingProfiles;
-using Business.Services.Abstract;
-using Business.Services.Concrete;
 using Common.Entities;
 using Data;
 using Data.Contexts;
@@ -101,11 +99,11 @@ builder.Services.AddAutoMapper(x =>
 });
 
 #region Repositories
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductReadRepository, ProductReadRepository>();
+builder.Services.AddScoped<IProductWriteRepository, ProductWriteRepository>();
 #endregion
 
 #region Services
-builder.Services.AddScoped<IProductService, ProductService>();
 #endregion
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

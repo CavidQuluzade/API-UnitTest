@@ -1,23 +1,22 @@
-﻿using Business.Dtos.Product;
-using FluentValidation;
+﻿using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Business.Validators.Product
+namespace Business.Features.Product.Commands.ProductUpdate
 {
-    public class ProductCreateDtoValidator : AbstractValidator<ProductCreateDto>
+    public class ProductUpdateCommandValidator : AbstractValidator<ProductUpdateCommand>
     {
-        public ProductCreateDtoValidator()
+        public ProductUpdateCommandValidator()
         {
             RuleFor(x => x.Name).NotEmpty().WithMessage("Name is required");
             RuleFor(x => x.Price).GreaterThan(0).WithMessage("Price can't be zero");
             RuleFor(x => x.Quantity).GreaterThan(0).WithMessage("Quantity must be at least 1");
             RuleFor(x => x.Description).MinimumLength(15).MaximumLength(400).WithMessage("Description must contain 15-400 character");
             RuleFor(x => x.Type).IsInEnum().WithMessage("Type is incorrect");
-            RuleFor(x => x.Photo).Must(IsCorrectFormat).WithMessage("Photo must be in format of image");
+            RuleFor(x => x.Photo).Must(IsCorrectFormat).When(x => x.Photo is not null).WithMessage("Photo must be in format of image");
         }
         private bool IsCorrectFormat(string photo)
         {

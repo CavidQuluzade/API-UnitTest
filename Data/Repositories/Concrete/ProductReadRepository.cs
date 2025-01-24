@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 
 namespace Data.Repositories.Concrete
 {
-    public class ProductRepository : BaseRepository<Product>, IProductRepository
+    public class ProductReadRepository : BaseReadRepository<Product>, IProductReadRepository
     {
         private readonly AppDbContext _context;
-        public ProductRepository(AppDbContext context) : base(context)
+        public ProductReadRepository(AppDbContext context) : base(context)
         {
             _context = context;
         }

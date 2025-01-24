@@ -8,8 +8,7 @@ using System.Threading.Tasks;
 
 namespace Data.Repositories.Abstract
 {
-    public interface IProductRepository : IBaseRepository<Product>
+    public interface IProductWriteRepository : IBaseWriteRepository<Product>
     {
-        Task<Product> GetByNameAsync(string name);
     }
 }
