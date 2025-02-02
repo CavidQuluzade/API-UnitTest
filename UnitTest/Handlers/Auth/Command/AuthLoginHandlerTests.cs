@@ -76,46 +76,29 @@ namespace UnitTest.Handlers.Auth.Command
             Assert.Contains("Email or password is incorrect", exception.Errors);
         }
 
-        //[Fact]
-        //public async Task Handle_WhenFlowIssucceded_ShouldReturnResponseModel()
-        //{
-        //    //Arrange
-        //    var request = new AuthLoginCommand
-        //    {
-        //        Email = "gmail@gmail.com",
-        //        Password = "password123!"
-        //    };
+        [Fact]
+        public async Task Handle_WhenFlowIssucceded_ShouldReturnResponseModel()
+        {
+            //Arrange
+            var request = new AuthLoginCommand
+            {
+                Email = "gmail@gmail.com",
+                Password = "password123!"
+            };
 
-        //    _userManager.Setup(x => x.FindByEmailAsync(request.Email)).ReturnsAsync(value: null);
+            _userManager.Setup(x => x.FindByEmailAsync(request.Email)).ReturnsAsync(new User());
 
-        //    var user = new User { Email = request.Email };
-        //    _userManager.Setup(x => x.CheckPasswordAsync(user, request.Password)).ReturnsAsync(value: true);
+            var user = new User { Email = request.Email };
+            _userManager.Setup(x => x.CheckPasswordAsync(user, request.Password)).ReturnsAsync(value: true);
 
-        //    var claims = new List<Claim>
-        //    {
-        //        new Claim(ClaimTypes.NameIdentifier, user.Id),
-        //        new Claim(ClaimTypes.Email, user.Email),
-        //        new Claim(ClaimTypes.Name, user.Email)
-        //    };
+            _userManager.Setup(x => x.GetRolesAsync(user)).ReturnsAsync(new List<string>());
 
-        //    _userManager.Setup(x => x.GetRolesAsync(user)).ReturnsAsync(new List<string> { "UserRole" });
+            //Act
+            var response = await _handler.Handle(request, It.IsAny<CancellationToken>());
 
-        //    var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.Object["JWT:SecretKey"]));
-        //    var token = new JwtSecurityToken
-        //    (
-        //        claims: claims,
-        //        issuer: _configuration.Object.GetSection("JWT:Issuer").Value,
-        //        audience: _configuration.Object.GetSection("JWT:Audience").Value,
-        //        expires: DateTime.Now.AddDays(1),
-        //        signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-        //    );
-
-        //    //Act
-        //    var response = await _handler.Handle(request, It.IsAny<CancellationToken>());
-
-        //    //Assert
-        //    Assert.IsType<Response<AuthLoginResponseDto>>(response);
-        //    Assert.Equal(new JwtSecurityTokenHandler().WriteToken(token), response.Data.Token);
-        //}
+            //Assert
+            Assert.IsType<Response<AuthLoginResponseDto>>(response);
+            Assert.Equal("Successfully logined", response.Message);
+        }
     }
 }

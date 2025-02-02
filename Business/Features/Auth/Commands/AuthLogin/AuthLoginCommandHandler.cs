@@ -66,8 +66,9 @@ namespace Business.Features.Auth.Commands.AuthLogin
             {
                 Data = new AuthLoginResponseDto
                 {
-                    Token = new JwtSecurityTokenHandler().WriteToken(token)
-                }
+                    Token = new JwtSecurityTokenHandler().WriteToken(token)    
+                },
+                Message = "Successfully logined"
             };
         }
     }
