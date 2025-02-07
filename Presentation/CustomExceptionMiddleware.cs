@@ -6,10 +6,12 @@ namespace Presentation
     public class CustomExceptionMiddleware
     {
         private readonly RequestDelegate next;
+        private readonly ILogger<CustomExceptionMiddleware> _logger;
 
-        public CustomExceptionMiddleware(RequestDelegate requestDelegate)
+        public CustomExceptionMiddleware(RequestDelegate requestDelegate, ILogger<CustomExceptionMiddleware> logger)
         {
             next = requestDelegate;
+            _logger = logger;
         }
         public async Task InvokeAsync(HttpContext context)
         {
@@ -35,6 +37,8 @@ namespace Presentation
                         response.Errors = exception.Errors;
                         break;
                     default:
+                        _logger.LogError($"Message: {ex.Message}  Exception: {ex.InnerException}");
+                        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                         response.Message = "Error occured";
                         break;
                 }

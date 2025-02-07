@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Business.Services.Producer;
 using Business.Wrappers;
 using Common.Exceptions;
 using Data.Repositories.Abstract;
@@ -17,11 +18,13 @@ namespace Business.Features.Product.Commands.DeleteProduct
         private readonly IProductWriteRepository _productWriteRepository;
         private readonly IProductReadRepository _productReadRepository;
         private readonly IUnitOfWork _unitOfWork;
-        public DeleteProductCommandHandler(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository, IUnitOfWork unitOfWork)
+        private readonly IProducerService _producerService;
+        public DeleteProductCommandHandler(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository, IUnitOfWork unitOfWork, IProducerService producerService)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
             _unitOfWork = unitOfWork;
+            _producerService = producerService;
         }
         public async Task<Response> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
         {
@@ -33,6 +36,8 @@ namespace Business.Features.Product.Commands.DeleteProduct
 
             _productWriteRepository.Delete(product);
             await _unitOfWork.CommitAsync();
+
+            await _producerService.ProducerAsync("Delete", product);
 
             return new Response
             {

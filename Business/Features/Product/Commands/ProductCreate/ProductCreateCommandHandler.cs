@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Business.Services.Producer;
 using Business.Wrappers;
 using Common.Exceptions;
 using Data.Repositories.Abstract;
@@ -18,12 +19,18 @@ namespace Business.Features.Product.Commands.ProductCreate
         private readonly IProductReadRepository _productReadRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public ProductCreateCommandHandler(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository, IUnitOfWork unitOfWork,IMapper mapper)
+        private readonly IProducerService _producerService;
+        public ProductCreateCommandHandler(IProductWriteRepository productWriteRepository, 
+                                           IProductReadRepository productReadRepository, 
+                                           IUnitOfWork unitOfWork,
+                                           IMapper mapper,
+                                           IProducerService producerService)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _producerService = producerService;
         }
         public async Task<Response> Handle(ProductCreateCommand request, CancellationToken cancellationToken)
         {
@@ -40,6 +47,8 @@ namespace Business.Features.Product.Commands.ProductCreate
             product = _mapper.Map<Common.Entities.Product>(request);
             await _productWriteRepository.CreateAsync(product);
             await _unitOfWork.CommitAsync();
+
+            await _producerService.ProducerAsync("Create", product);
 
             return new Response
             {

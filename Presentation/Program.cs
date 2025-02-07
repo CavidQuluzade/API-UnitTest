@@ -14,6 +14,8 @@ using Swashbuckle.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Serilog;
+using Business.Services.Producer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -120,6 +122,10 @@ builder.Services.AddScoped<IProductWriteRepository, ProductWriteRepository>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddAppExtensions();
+
+Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).CreateLogger();
+builder.Services.AddSerilog();
+builder.Services.AddScoped<IProducerService, ProducerService>();
 
 var app = builder.Build();
 
